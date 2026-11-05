@@ -31,15 +31,31 @@ Many document-AI systems become unsafe when the model is allowed to both interpr
 - audit events for extraction, routing and review
 - generated synthetic PDF benchmark
 - GitHub Actions CI and reproducible evaluation
+- branded live dashboard and architecture assets captured in CI
 
-## Safety benchmark
+## Measured safety benchmark
 
-The synthetic benchmark deliberately separates **model confidence** from **business validity**. It compares:
+The checked-in benchmark contains **30 generated synthetic purchase-order PDFs**:
 
-1. a naive confidence-only policy
-2. the controlled workflow using confidence + deterministic validation
+- 12 clean documents
+- 6 incorrect document totals
+- 4 line-item arithmetic errors
+- 4 missing signatures
+- 4 low-confidence cases
 
-This measures whether high-confidence but invalid documents are incorrectly auto-approved. See `docs/evaluation.md`.
+It compares a naive **confidence-only** policy with the controlled workflow using confidence **plus deterministic validation**.
+
+| Metric | Result |
+| --- | ---: |
+| Controlled routing accuracy | **100%** |
+| Controlled unsafe auto-approvals | **0 / 30** |
+| Confidence-only unsafe auto-approvals | **14 / 30** |
+| Human-review recall | **100%** |
+| Auto-approval precision | **100%** |
+
+The important result is not a claim of universal document-AI accuracy. It demonstrates that model confidence alone is insufficient to decide whether extracted business data is safe to act on. High-confidence documents can still contain inconsistent totals, arithmetic errors or missing required approval information.
+
+See `docs/evaluation-results.md` for methodology and limitations.
 
 ## Quick start
 
@@ -51,7 +67,10 @@ python scripts/generate_synthetic_corpus.py
 PYTHONPATH=src uvicorn app.main:app --reload
 ```
 
-Open `http://localhost:8000/demo`.
+Open:
+
+- `http://localhost:8000/demo` — live document review dashboard
+- `http://localhost:8000/architecture` — portfolio architecture/process visual
 
 ## Run tests and evaluation
 
@@ -59,8 +78,13 @@ Open `http://localhost:8000/demo`.
 pytest -q
 python scripts/generate_synthetic_corpus.py
 PYTHONPATH=src python scripts/run_evaluation.py
+PYTHONPATH=src python scripts/plot_evaluation.py
 ```
 
+GitHub Actions also runs the complete test/evaluation flow and captures the live UI with Playwright.
+
 ## Design principle
+
+**LLMs interpret; application logic validates and controls side effects.**
 
 LLMs are used for fuzzy interpretation. Conventional application logic owns deterministic checks and side effects. This makes it possible to audit why a document was automatically accepted, routed to review or rejected.
