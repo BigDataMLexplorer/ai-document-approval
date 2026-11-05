@@ -33,21 +33,23 @@ async def upload_document(file: UploadFile = File(...)) -> DocumentCase:
         return workflow.process(source_text)
     except ValueError as exc:
         raise HTTPException(status_code=415, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 @router.get("/documents/{case_id}", response_model=DocumentCase)
-def get_document(case_id: UUID) -> DocumentCase:
+def get_case(case_id: UUID) -> DocumentCase:
     try:
         return workflow.cases[case_id]
     except KeyError as exc:
-        raise HTTPException(status_code=404, detail="Document not found") from exc
+        raise HTTPException(status_code=404, detail="Case not found") from exc
 
 
 @router.post("/documents/{case_id}/review", response_model=DocumentCase)
-def review_document(case_id: UUID, review: HumanReviewRequest) -> DocumentCase:
+def review_case(case_id: UUID, review: HumanReviewRequest) -> DocumentCase:
     try:
         return workflow.review(case_id, review)
     except KeyError as exc:
-        raise HTTPException(status_code=404, detail="Document not found") from exc
+        raise HTTPException(status_code=404, detail="Case not found") from exc
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
