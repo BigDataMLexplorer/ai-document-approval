@@ -20,7 +20,7 @@ jobs:
         run: python scripts/generate_synthetic_corpus.py
       - name: Evaluate routing safety
         run: PYTHONPATH=src python scripts/run_evaluation.py
-      - name: Build benchmark chart
+      - name: Build branded benchmark chart
         run: PYTHONPATH=src python scripts/plot_evaluation.py
       - name: Install Chromium
         run: python -m playwright install --with-deps chromium
@@ -40,7 +40,7 @@ jobs:
           else:
               raise SystemExit('API did not become healthy')
           PY
-      - name: Capture live review dashboard
+      - name: Capture live review dashboard and architecture
         run: PYTHONPATH=src python scripts/capture_demo_screenshot.py
       - name: Stop API
         if: always()
@@ -55,3 +55,4 @@ jobs:
             artifacts/evaluation.json
             artifacts/approval_safety.png
             artifacts/review_dashboard.png
+            artifacts/architecture_process.png
