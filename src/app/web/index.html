@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Document Approval</title><link rel="stylesheet" href="/static/app.css"></head>
+<body><main class="shell">
+<header class="hero"><div><p class="eyebrow">PORTFOLIO DEMO · HUMAN-IN-THE-LOOP DOCUMENT AI</p><h1>AI Document Operations</h1><p class="subtitle">Structured extraction → deterministic validation → human approval → audit trail</p></div><div class="pill">FastAPI · Pydantic · HITL</div></header>
+<section class="stats"><div><span>30</span><small>Synthetic PDFs</small></div><div><span>14</span><small>Unsafe approvals prevented</small></div><div><span>0</span><small>Unsafe controlled approvals</small></div><div><span>100%</span><small>Review recall</small></div></section>
+<section class="workspace">
+<article class="panel source-panel"><div class="panel-head"><div><p class="kicker">INPUT</p><h2>Purchase order</h2></div><span class="tag">Synthetic</span></div>
+<div class="sample-row"><button class="sample active" data-sample="bad">Invalid total</button><button class="sample" data-sample="clean">Clean</button><button class="sample" data-sample="confidence">Low confidence</button></div>
+<textarea id="source"></textarea><button id="run" class="primary">Process document</button></article>
+<article class="panel result-panel"><div class="panel-head"><div><p class="kicker">DECISION</p><h2>Validation & approval</h2></div><span id="status" class="status idle">Not processed</span></div>
+<div id="decision-summary" class="decision-summary"><p>Run the workflow to inspect extraction, validation and routing.</p></div>
+<div class="two-col"><section><p class="kicker">EXTRACTED JSON</p><pre id="extracted">—</pre></section><section><p class="kicker">VALIDATION ISSUES</p><div id="issues" class="issues"><span class="muted">—</span></div></section></div>
+<div class="audit-wrap"><p class="kicker">AUDIT TRAIL</p><div id="audit" class="audit"><span class="muted">—</span></div></div>
+<div class="review-actions"><button id="approve" disabled>Approve</button><button id="reject" disabled class="danger">Reject</button></div></article>
+</section>
+</main><script src="/static/app.js"></script></body></html>

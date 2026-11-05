@@ -1,0 +1,7 @@
+[
+  {"name":"clean","expected_status":"auto_approved","text":"PO: ACME-1042\nCustomer: Acme Medical Supplies\nOrder Date: 2026-11-05\nCurrency: USD\nITEM|SKU-100|Sterile gloves|10|12.50|125.00\nITEM|SKU-200|Surgical masks|4|15.00|60.00\nSubtotal: 185.00\nTax: 18.50\nTotal: 203.50\nRequested Delivery: 2026-11-10\nSignature: present"},
+  {"name":"bad_total","expected_status":"needs_review","text":"PO: ACME-1043\nCustomer: Acme Medical Supplies\nOrder Date: 2026-11-05\nCurrency: USD\nITEM|SKU-100|Sterile gloves|10|12.50|125.00\nSubtotal: 125.00\nTax: 12.50\nTotal: 150.00\nRequested Delivery: 2026-11-10\nSignature: present"},
+  {"name":"missing_signature","expected_status":"needs_review","text":"PO: ACME-1044\nCustomer: Acme Medical Supplies\nOrder Date: 2026-11-05\nCurrency: USD\nITEM|SKU-100|Sterile gloves|10|12.50|125.00\nSubtotal: 125.00\nTax: 12.50\nTotal: 137.50\nRequested Delivery: 2026-11-10\nSignature: missing"},
+  {"name":"low_confidence","expected_status":"needs_review","text":"PO: ACME-1045\nCustomer: Acme Medical Supplies\nOrder Date: 2026-11-05\nCurrency: USD\nITEM|SKU-100|Sterile gloves|10|12.50|125.00\nSubtotal: 125.00\nTax: 12.50\nTotal: 137.50\nRequested Delivery: 2026-11-10\nSignature: present\nLOW_CONFIDENCE: total"},
+  {"name":"line_math_error","expected_status":"needs_review","text":"PO: ACME-1046\nCustomer: Acme Medical Supplies\nOrder Date: 2026-11-05\nCurrency: USD\nITEM|SKU-100|Sterile gloves|10|12.50|130.00\nSubtotal: 130.00\nTax: 13.00\nTotal: 143.00\nRequested Delivery: 2026-11-10\nSignature: present"}
+]
