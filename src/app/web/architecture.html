@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Document Approval Architecture</title>
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#edf4ff;background:#07101d}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 18% 0%,#1a3157 0,#0a1424 44%,#050a12 100%)}
+.canvas{width:1440px;min-height:900px;padding:60px 72px;margin:0 auto}
+.eyebrow{font-size:13px;letter-spacing:.17em;font-weight:800;color:#82aaff;margin-bottom:9px}
+h1{font-size:48px;line-height:1.05;margin:0;letter-spacing:-.04em}
+.subtitle{font-size:18px;color:#9eb1ca;margin:12px 0 42px}
+.flow{display:grid;grid-template-columns:1fr 66px 1fr 66px 1fr 66px 1fr;align-items:center}
+.node{min-height:150px;border:1px solid #2a4468;background:rgba(9,21,36,.94);border-radius:18px;padding:22px;box-shadow:0 20px 55px rgba(0,0,0,.22)}
+.node strong{display:block;font-size:20px;margin-bottom:8px}.node p{color:#94a8c2;line-height:1.55;margin:0;font-size:14px}
+.icon{height:36px;width:36px;display:grid;place-items:center;border-radius:10px;background:#142b50;color:#9bc0ff;font-weight:900;margin-bottom:18px}
+.arrow{text-align:center;color:#668cff;font-size:32px;font-weight:800}
+.router{border-color:#735fff;background:linear-gradient(160deg,rgba(76,68,150,.34),rgba(9,21,36,.94))}
+.branches{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:30px;margin-left:calc((100% - 198px)/7 * 4 + 198px)}
+.branch{border:1px solid #294768;border-radius:17px;padding:20px;background:#091728}
+.branch.auto{border-color:#326f5a}.branch.review{border-color:#765e2c}
+.branch .label{font-size:11px;letter-spacing:.12em;font-weight:800;text-transform:uppercase;margin-bottom:7px}
+.auto .label{color:#78e0ac}.review .label{color:#ffd175}
+.branch strong{font-size:18px}.branch p{font-size:13px;color:#91a5bf;line-height:1.5;margin:8px 0 0}
+.downstream{display:grid;grid-template-columns:1fr 66px 1fr;margin-top:28px;margin-left:calc((100% - 198px)/7 * 4 + 198px)}
+.principle{margin-top:40px;display:flex;justify-content:space-between;align-items:center;border:1px solid #29415f;border-radius:17px;background:rgba(10,23,41,.82);padding:20px 24px}
+.principle strong{font-size:18px}.principle span{color:#91a8c4;font-size:14px}
+.badges{display:flex;gap:8px}.badge{border:1px solid #35547d;border-radius:999px;padding:7px 11px;color:#a9c8f4;font-size:11px}
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="eyebrow">PORTFOLIO ARCHITECTURE · HUMAN-IN-THE-LOOP DOCUMENT AI</div>
+  <h1>Reliable document automation separates AI interpretation from business control</h1>
+  <p class="subtitle">The model extracts structured facts. Deterministic code validates them. Humans review uncertainty before any side effect.</p>
+
+  <div class="flow">
+    <div class="node"><div class="icon">01</div><strong>Document intake</strong><p>PDF, email or text input enters a provider-agnostic processing pipeline.</p></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="icon">02</div><strong>Structured extraction</strong><p>Typed PurchaseOrder output with per-field confidence. PydanticAI can back the extractor.</p></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="icon">03</div><strong>Deterministic validation</strong><p>Recompute line totals, subtotal, tax, required fields, signature and business constraints.</p></div>
+    <div class="arrow">→</div>
+    <div class="node router"><div class="icon">04</div><strong>Decision router</strong><p>Confidence + validation results decide whether the document can proceed or requires review.</p></div>
+  </div>
+
+  <div class="branches">
+    <div class="branch auto"><div class="label">Safe path</div><strong>Auto-approved</strong><p>Only high-confidence documents that pass deterministic validation can proceed automatically.</p></div>
+    <div class="branch review"><div class="label">Exception path</div><strong>Human review queue</strong><p>Reviewers inspect the source, extracted JSON and exact validation issues, then approve, edit or reject.</p></div>
+  </div>
+
+  <div class="downstream">
+    <div class="node"><div class="icon">05</div><strong>Downstream action</strong><p>Approved data can be sent to ERP, CSV, email or another API. Side effects happen only after policy approval.</p></div>
+    <div class="arrow">+</div>
+    <div class="node"><div class="icon">06</div><strong>Audit trail</strong><p>Received → extracted → routed → reviewed events preserve traceability for every document.</p></div>
+  </div>
+
+  <div class="principle">
+    <div><strong>Design principle: LLMs interpret; application logic validates and controls side effects.</strong><br><span>This keeps fuzzy AI tasks separate from deterministic business rules and approval authority.</span></div>
+    <div class="badges"><span class="badge">FastAPI</span><span class="badge">Pydantic</span><span class="badge">HITL</span><span class="badge">Auditability</span></div>
+  </div>
+</div>
+</body>
+</html>
