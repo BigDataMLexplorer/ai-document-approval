@@ -6,53 +6,70 @@ from datetime import date
 from app.models import ExtractionResult, FieldConfidence, LineItem, PurchaseOrder
 
 
-class DeterministicDemoExtractor:
-    """Dependency-free extractor for the synthetic demo format.
+def _money(value: str) -> float:
+    return float(value.replace(",", "").strip())
 
-    It is intentionally not presented as a general document-AI model.
-    It lets the workflow, validators and evaluation run without external API costs.
+
+class DeterministicDemoExtractor:
+    """Dependency-free extractor for the public demo and safety-pipeline tests.
+
+    The production-facing interface is provider-agnostic. A PydanticAI extractor can
+    replace this class without changing validation, approval, or audit logic.
     """
 
-    @staticmethod
-    def _require(pattern: str, text: str, label: str) -> str:
-        m = re.search(pattern, text, flags=re.I | re.M)
-        if not m:
-            raise ValueError(f"Missing {label}")
-        return m.group(1).strip()
-
     def extract(self, text: str) -> ExtractionResult:
-        po_number = self._require(r^PO:\s*(.+)$", text, "PO number")
-        customer = self._require(r'^Customer:\s*(.+)$", text, "customer")
-        order_date = date.fromisoformat(self._requir(r^Order Date:\*(ŠJÊI‹^›Ü™\ˆ]HŠJBˆİ\œ™[˜ŞHHÙ[‹—Ü™\]Z\Š—İ\œ™[˜ŞN—ÊŠŠÊI‹^˜İ\œ™[˜ŞHŠK\\Š
-Bˆ][\Îˆ\İÓ[™R][WHH×Bˆ›ÜˆH[ˆ™K™š[™]\Šˆ—’USW
-×—_JÊW
-×—_JÊ_
-×—_JÊ_
-×—_JÊ_
-×——JÊI‹^›YÜÏ\™K“JN‚ˆÚİK\ØË]KšXÙKİ[HŞœİš\
+        def grab(pattern: str, default: str = "") -> str:
+            match = re.search(pattern, text, flags=re.I | re.M)
+            return match.group(1).strip() if match else default
 
-H›Üˆ[ˆK™Ü›İ\Ê
-WBˆ][\Ë˜\[™
-[™R][JÚİO\ÚİK\ØÜš\[ÛY\ØË]X[]OY›Ø]
-]JK[š]ÜšXÙOY›Ø]
-šXÙJK[™Wİİ[Y›Ø]
-İ[
-JJBˆYˆ›İ][\Î‚ˆ˜Z\ÙH˜[YQ\œ›ÜŠ“›È[™H][\È›İ[™ŠBˆİXİ[H›Ø]
-Ù[‹—Ü™\]Z\™J‰×”İXİ[—ÊŠ
-ÊÎ——
-ÊOÊH‹^œİXİ[ŠJBˆ^H›Ø]
-Ù[‹—Ü™\]Z\Š—•^—ÊŠ
-ÊÎ——
-ÊOÊIÈ‹^^ŠJBˆİ[H›Ø]
-Ù[‹—Ü™\]Z\Š—•İ[—ÊŠ
-ÊÎ——
-ÊOÊI‹^İ[ŠJBˆ[]™\WÜ˜]ÈH™KœÙX\˜Ú
-—”™\]Y\İY[]™\N—ÊŠŠÊI‹^›YÜÏ\™K’H™K“JBˆÚYÛ˜]\™WÜ˜]ÈHÙ[‹—Ü™\]Z\™J‰×”ÚYÛ˜]\™N—ÊŠŠÊI‹^œÚYÛ˜]\™HŠBˆÚYÛ˜]\™HHÚYÛ˜]\™WÜ˜]Ë›İÙ\Š
-H[ˆÈY\È‹œ™\Ù[‹œÚYÛ™YŸBˆİ×ÙšY[ÈHÙ]
-™K™š[™[
-‰×“Õ×ĞÓÓ‘’QSÑN—ÊŠŠÊI‹^›YÜÏ\™K’H™K“JJBˆÙ^WÙšY[ÈHÂˆœ×Û[X™\ˆ‹˜İ\İÛY\—Û˜[YH‹›Ü™\—Ù]H‹˜İ\œ™[˜ŞH‹›[™WÚ][\È‹ˆœİXİ[‹^‹İ[‹œ™\]Y\İYÙ[]™\WÙ]H‹œÚYÛ˜]\™WÜ™\Ù[‹ˆBˆÛÛ™šY[˜Ù\ÈHÂˆšY[ÛÛ™šY[˜ÙJšY[Y‹ÛÛ™šY[˜ÙOLŒˆYˆˆ[ˆİ×ÙšY[È[ÙHN
-Bˆ›Üˆˆ[ˆÙ^WÙšY[ÂˆBˆ™]\›ˆ^˜Xİ[Û”™\İ[
-ˆØİ[Y[T\˜Ú\ÙSÜ™\Šˆ×Û[X™\\×Û[X™\‹ˆİ\İÛY\—Û˜[YOXİ\İÛY\‹ˆÜ™\—Ù]O[Ü™\—Ù]Kˆİ\œ™[˜ŞOXİ\œ™[˜ŞKˆ[™WÚ][\ÏZ][\ËˆİXİ[\İXİ[ˆ^]^ˆİ[]İ[ˆ™\]Y\İYÙ[]™\WÙ]OY]K™œ›ÛZ\ÛÙ›Ü›X]
-[]™\WÜ˜]ÊHYˆ[]™\WÜ˜]È[ÙH›Û™KˆÚYÛ˜]\™WÜ™\Ù[\ÚYÛ˜]\™Kˆ
-KˆšY[ØÛÛ™šY[˜Ù\ÏXÛÛ™šY[˜Ù\Ëˆ[Ù[Û˜[YOH™]\›Z[š\İXËY[[È‹ˆ
-B
+        po_number = grab(r"^PO(?: Number)?:\s*(.+)$")
+        customer = grab(r"^Customer:\s*(.+)$")
+        order_date = date.fromisoformat(grab(r"^Order Date:\s*(\d{4}-\d{2}-\d{2})$"))
+        currency = grab(r"^Currency:\s*([A-Z]{3})$", "USD")
+        subtotal = _money(grab(r"^Subtotal:\s*([0-9.,]+)$", "0"))
+        tax = _money(grab(r"^Tax:\s*([0-9.,]+)$", "0"))
+        total = _money(grab(r"^Total:\s*([0-9.,]+)$", "0"))
+        delivery_raw = grab(r"^Requested Delivery:\s*(\d{4}-\d{2}-\d{2})$")
+        signature = grab(r"^Signature:\s*(present|missing)$", "missing").lower() == "present"
+
+        items: list[LineItem] = []
+        for m in re.finditer(
+            r"^ITEM\|([^|]+)\|([^|]+)\|([0-9.]+)\|([0-9.]+)\|([0-9.]+)$",
+            text,
+            flags=re.M,
+        ):
+            items.append(
+                LineItem(
+                    sku=m.group(1).strip(),
+                    description=m.group(2).strip(),
+                    quantity=float(m.group(3)),
+                    unit_price=float(m.group(4)),
+                    line_total=float(m.group(5)),
+                )
+            )
+
+        low_fields = set(re.findall(r"^LOW_CONFIDENCE:\s*(.+)$", text, flags=re.I | re.M))
+        key_fields = [
+            "po_number", "customer_name", "order_date", "currency", "line_items",
+            "subtotal", "tax", "total", "requested_delivery_date", "signature_present",
+        ]
+        confidences = [
+            FieldConfidence(field=f, confidence=0.62 if f in low_fields else 0.98)
+            for f in key_fields
+        ]
+        return ExtractionResult(
+            document=PurchaseOrder(
+                po_number=po_number,
+                customer_name=customer,
+                order_date=order_date,
+                currency=currency,
+                line_items=items,
+                subtotal=subtotal,
+                tax=tax,
+                total=total,
+                requested_delivery_date=date.fromisoformat(delivery_raw) if delivery_raw else None,
+                signature_present=signature,
+            ),
+            field_confidences=confidences,
+            model_name="deterministic-demo",
+        )
