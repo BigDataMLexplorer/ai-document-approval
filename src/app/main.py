@@ -14,3 +14,8 @@ app.mount("/static", StaticFiles(directory=WEB / "static"), name="static")
 @app.get("/demo", response_class=HTMLResponse, include_in_schema=False)
 def demo() -> HTMLResponse:
     return HTMLResponse((WEB / "index.html").read_text(encoding="utf-8"))
+
+
+@app.get("/architecture", response_class=HTMLResponse, include_in_schema=False)
+def architecture() -> HTMLResponse:
+    return HTMLResponse((WEB / "architecture.html").read_text(encoding="utf-8"))
